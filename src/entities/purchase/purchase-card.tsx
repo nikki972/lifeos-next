@@ -4,14 +4,12 @@ import { Purchase } from "@/types/purchase";
 
 import { Card } from "@/components/ui/card";
 
-import { Badge } from "@/components/ui/badge";
-
 import { Button } from "@/components/ui/button";
 
 import {
   Heart,
-  Check,
   Trash2,
+  Check,
 } from "lucide-react";
 
 import { usePurchasesStore } from "@/store/purchases-store";
@@ -33,7 +31,7 @@ export function PurchaseCard({
     <Card className="bg-zinc-900 border-zinc-800 rounded-3xl p-4">
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="font-semibold text-lg">
+          <h2 className="text-xl font-semibold">
             {purchase.title}
           </h2>
 
@@ -41,19 +39,9 @@ export function PurchaseCard({
             {purchase.price} ₽
           </p>
 
-          <div className="flex gap-2 mt-3">
-            <Badge>
-              {purchase.category}
-            </Badge>
-
-            <Badge variant="secondary">
-              {purchase.priority}
-            </Badge>
-
-            <Badge variant="outline">
-              {purchase.status}
-            </Badge>
-          </div>
+          <p className="text-sm text-zinc-500 mt-2">
+            {purchase.status}
+          </p>
         </div>
 
         <button
@@ -73,7 +61,6 @@ export function PurchaseCard({
 
       <div className="flex gap-2 mt-4">
         <Button
-          className="rounded-2xl"
           onClick={() =>
             completePurchase(
               purchase.id
@@ -85,7 +72,6 @@ export function PurchaseCard({
 
         <Button
           variant="destructive"
-          className="rounded-2xl"
           onClick={() =>
             removePurchase(
               purchase.id

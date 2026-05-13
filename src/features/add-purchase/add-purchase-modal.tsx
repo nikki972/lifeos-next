@@ -28,21 +28,16 @@ export function AddPurchaseModal() {
 
       price: Number(price),
 
-      category: "apartment",
-
-      priority: "wait",
-
-      status: "planned",
-
-      tags: [],
+      createdAt:
+        new Date().toISOString(),
 
       isFavorite: false,
 
-      createdAt:
-        new Date().toISOString(),
+      status: "planned",
     });
 
     setTitle("");
+
     setPrice("");
   };
 

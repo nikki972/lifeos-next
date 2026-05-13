@@ -9,10 +9,6 @@ import { Purchase } from "@/types/purchase";
 interface PurchasesStore {
   purchases: Purchase[];
 
-  hydrated: boolean;
-
-  setHydrated: () => void;
-
   addPurchase: (
     purchase: Purchase
   ) => void;
@@ -35,13 +31,6 @@ export const usePurchasesStore =
     persist(
       (set) => ({
         purchases: [],
-
-        hydrated: false,
-
-        setHydrated: () =>
-          set({
-            hydrated: true,
-          }),
 
         addPurchase: (purchase) =>
           set((state) => ({
@@ -89,12 +78,6 @@ export const usePurchasesStore =
       }),
       {
         name: "lifeos-purchases",
-
-        onRehydrateStorage: () => {
-          return (state) => {
-            state?.setHydrated();
-          };
-        },
       }
     )
   );

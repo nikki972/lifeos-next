@@ -1,16 +1,3 @@
-import { Category } from "./category";
-
-export type PurchasePriority =
-  | "urgent"
-  | "wait"
-  | "wish";
-
-export type PurchaseStatus =
-  | "planned"
-  | "completed"
-  | "postponed"
-  | "cancelled";
-
 export interface Purchase {
   id: string;
 
@@ -18,21 +5,11 @@ export interface Purchase {
 
   price: number;
 
-  category: Category;
-
-  priority: PurchasePriority;
-
-  status: PurchaseStatus;
-
-  notes?: string;
-
-  url?: string;
-
-  store?: string;
-
-  tags: string[];
+  createdAt: string;
 
   isFavorite: boolean;
 
-  createdAt: string;
+  status:
+    | "planned"
+    | "completed";
 }
