@@ -18,6 +18,20 @@ interface Props {
   purchase: Purchase;
 }
 
+const categoryMap = {
+  apartment: "Квартира",
+  car: "Машина",
+  "3d": "3D",
+  clothes: "Одежда",
+  rest: "Отдых",
+};
+
+const priorityMap = {
+  urgent: "Срочно",
+  wait: "Подождет",
+  wish: "Хочу",
+};
+
 export function PurchaseCard({
   purchase,
 }: Props) {
@@ -35,13 +49,59 @@ export function PurchaseCard({
             {purchase.title}
           </h2>
 
-          <p className="text-zinc-400 mt-1">
+          <p className="text-2xl font-bold mt-2">
             {purchase.price} ₽
           </p>
 
-          <p className="text-sm text-zinc-500 mt-2">
-            {purchase.status}
-          </p>
+          <div className="flex gap-2 mt-3">
+            <div className="bg-zinc-800 text-sm px-3 py-1 rounded-full">
+              {
+                categoryMap[
+                  purchase.category
+                ]
+              }
+            </div>
+
+            <div
+              className={`
+                text-sm
+                px-3
+                py-1
+                rounded-full
+                ${
+                  purchase.priority ===
+                  "urgent"
+                    ? "bg-red-500/20 text-red-400"
+                    : ""
+                }
+                ${
+                  purchase.priority ===
+                  "wait"
+                    ? "bg-yellow-500/20 text-yellow-400"
+                    : ""
+                }
+                ${
+                  purchase.priority ===
+                  "wish"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : ""
+                }
+              `}
+            >
+              {
+                priorityMap[
+                  purchase.priority
+                ]
+              }
+            </div>
+          </div>
+
+          {purchase.status ===
+            "completed" && (
+            <div className="mt-3 text-green-400 text-sm">
+              Куплено
+            </div>
+          )}
         </div>
 
         <button
@@ -59,7 +119,7 @@ export function PurchaseCard({
         </button>
       </div>
 
-      <div className="flex gap-2 mt-4">
+      <div className="flex gap-2 mt-5">
         <Button
           onClick={() =>
             completePurchase(
