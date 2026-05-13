@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { PurchaseCard } from "@/entities/purchase/purchase-card";
 
-import { Purchase } from "@/shared/types/purchase";
+import { Purchase } from "@/types/purchase";
 
 import { supabase } from "@/lib/supabase";
 
