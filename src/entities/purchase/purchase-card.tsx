@@ -12,10 +12,22 @@ import {
   Check,
 } from "lucide-react";
 
-import { usePurchasesStore } from "@/store/purchases-store";
-
 interface Props {
   purchase: Purchase;
+
+  onDelete: (
+    id: string
+  ) => void;
+
+  onToggleFavorite: (
+    id: string,
+    current: boolean
+  ) => void;
+
+  onToggleStatus: (
+    id: string,
+    current: string
+  ) => void;
 }
 
 const categoryMap = {
@@ -34,13 +46,10 @@ const priorityMap = {
 
 export function PurchaseCard({
   purchase,
+  onDelete,
+  onToggleFavorite,
+  onToggleStatus,
 }: Props) {
-  const {
-    removePurchase,
-    toggleFavorite,
-    completePurchase,
-  } = usePurchasesStore();
-
   return (
     <Card className="bg-zinc-900 border-zinc-800 rounded-3xl p-4">
       <div className="flex items-start justify-between">
@@ -106,7 +115,10 @@ export function PurchaseCard({
 
         <button
           onClick={() =>
-            toggleFavorite(purchase.id)
+            onToggleFavorite(
+              purchase.id,
+              purchase.isFavorite
+            )
           }
         >
           <Heart
@@ -120,25 +132,21 @@ export function PurchaseCard({
       </div>
 
       <div className="flex gap-2 mt-5">
-        {purchase.status !==
-          "completed" && (
-          <Button
-            onClick={() =>
-              completePurchase(
-                purchase.id
-              )
-            }
-          >
-            <Check />
-          </Button>
-        )}
+        <Button
+          onClick={() =>
+            onToggleStatus(
+              purchase.id,
+              purchase.status
+            )
+          }
+        >
+          <Check />
+        </Button>
 
         <Button
           variant="destructive"
           onClick={() =>
-            removePurchase(
-              purchase.id
-            )
+            onDelete(purchase.id)
           }
         >
           <Trash2 />
