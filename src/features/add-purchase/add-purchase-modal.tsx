@@ -60,7 +60,7 @@ export function AddPurchaseModal() {
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 space-y-4">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 space-y-4 relative z-10">
       <Input
         placeholder="Название"
         value={title}
@@ -78,59 +78,61 @@ export function AddPurchaseModal() {
         }
       />
 
-      <Select
-        value={category}
-        onValueChange={setCategory}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Категория" />
-        </SelectTrigger>
+      <div className="space-y-3">
+        <Select
+          value={category}
+          onValueChange={setCategory}
+        >
+          <SelectTrigger className="bg-zinc-950 border-zinc-700">
+            <SelectValue placeholder="Категория" />
+          </SelectTrigger>
 
-        <SelectContent>
-          <SelectItem value="apartment">
-            Квартира
-          </SelectItem>
+          <SelectContent className="bg-zinc-900 border-zinc-700 text-white">
+            <SelectItem value="apartment">
+              Квартира
+            </SelectItem>
 
-          <SelectItem value="car">
-            Машина
-          </SelectItem>
+            <SelectItem value="car">
+              Машина
+            </SelectItem>
 
-          <SelectItem value="3d">
-            3D
-          </SelectItem>
+            <SelectItem value="3d">
+              3D
+            </SelectItem>
 
-          <SelectItem value="clothes">
-            Одежда
-          </SelectItem>
+            <SelectItem value="clothes">
+              Одежда
+            </SelectItem>
 
-          <SelectItem value="rest">
-            Отдых
-          </SelectItem>
-        </SelectContent>
-      </Select>
+            <SelectItem value="rest">
+              Отдых
+            </SelectItem>
+          </SelectContent>
+        </Select>
 
-      <Select
-        value={priority}
-        onValueChange={setPriority}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Приоритет" />
-        </SelectTrigger>
+        <Select
+          value={priority}
+          onValueChange={setPriority}
+        >
+          <SelectTrigger className="bg-zinc-950 border-zinc-700">
+            <SelectValue placeholder="Приоритет" />
+          </SelectTrigger>
 
-        <SelectContent>
-          <SelectItem value="urgent">
-            Срочно
-          </SelectItem>
+          <SelectContent className="bg-zinc-900 border-zinc-700 text-white">
+            <SelectItem value="urgent">
+              Срочно
+            </SelectItem>
 
-          <SelectItem value="wait">
-            Может подождать
-          </SelectItem>
+            <SelectItem value="wait">
+              Может подождать
+            </SelectItem>
 
-          <SelectItem value="wish">
-            Хочу
-          </SelectItem>
-        </SelectContent>
-      </Select>
+            <SelectItem value="wish">
+              Хочу
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <Button
         className="w-full rounded-2xl"
