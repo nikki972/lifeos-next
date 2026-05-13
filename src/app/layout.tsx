@@ -12,8 +12,6 @@ export const metadata: Metadata = {
 
   manifest: "/manifest.json",
 
-  themeColor: "#000000",
-
   appleWebApp: {
     capable: true,
 
@@ -27,6 +25,10 @@ export const metadata: Metadata = {
 
     apple: "/icon-192.png",
   },
+};
+
+export const viewport = {
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
