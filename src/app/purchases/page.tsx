@@ -6,7 +6,7 @@ import { PurchaseCard } from "@/entities/purchase/purchase-card";
 
 import { Purchase } from "@/shared/types/purchase";
 
-import { supabase } from "@/shared/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 export default function PurchasesPage() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
