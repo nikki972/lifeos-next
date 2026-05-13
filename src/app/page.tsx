@@ -1,29 +1,35 @@
-import { AddPurchaseModal } from "@/features/add-purchase/add-purchase-modal";
-
-import { PurchasesList } from "@/widgets/purchases-list";
-
-import { BottomNavbar } from "@/widgets/bottom-navbar";
-
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-4 max-w-xl mx-auto pb-40">
-      <div className="mb-8">
-        <h1 className="text-5xl font-bold">
-          LifeOS
-        </h1>
+    <main className="min-h-screen bg-black text-white max-w-xl mx-auto p-4">
+      <h1 className="text-6xl font-bold">
+        LifeOS
+      </h1>
 
-        <p className="text-zinc-400 mt-2">
-          Покупки, финансы и цели
-        </p>
+      <p className="text-zinc-400 mt-3">
+        Личная система управления жизнью
+      </p>
+
+      <div className="mt-10 space-y-4">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+          <h2 className="text-xl font-semibold">
+            Покупки
+          </h2>
+
+          <p className="text-zinc-400 mt-2">
+            Управление покупками и желаниями
+          </p>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+          <h2 className="text-xl font-semibold">
+            Финансы
+          </h2>
+
+          <p className="text-zinc-400 mt-2">
+            Аналитика расходов и накоплений
+          </p>
+        </div>
       </div>
-
-      <div className="space-y-4">
-        <AddPurchaseModal />
-
-        <PurchasesList />
-      </div>
-
-      <BottomNavbar />
     </main>
   );
 }
