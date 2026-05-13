@@ -1,10 +1,12 @@
 {
   "name": "LifeOS",
   "short_name": "LifeOS",
-  "start_url": "/",
+  "theme_color": "#000000",
+  "background_color": "#000000",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "/icon-192.png",

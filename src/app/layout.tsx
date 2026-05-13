@@ -6,8 +6,27 @@ import { BottomNavbar } from "@/widgets/bottom-navbar";
 
 export const metadata: Metadata = {
   title: "LifeOS",
+
   description:
-    "Покупки, финансы и цели",
+    "Personal Life Management System",
+
+  manifest: "/manifest.json",
+
+  themeColor: "#000000",
+
+  appleWebApp: {
+    capable: true,
+
+    statusBarStyle: "black",
+
+    title: "LifeOS",
+  },
+
+  icons: {
+    icon: "/icon-192.png",
+
+    apple: "/icon-192.png",
+  },
 };
 
 export default function RootLayout({
