@@ -32,7 +32,9 @@ export const usePurchasesStore =
       (set) => ({
         purchases: [],
 
-        addPurchase: (purchase) =>
+        addPurchase: (
+          purchase
+        ) =>
           set((state) => ({
             purchases: [
               purchase,
@@ -48,31 +50,37 @@ export const usePurchasesStore =
               ),
           })),
 
-        toggleFavorite: (id) =>
+        toggleFavorite: (
+          id
+        ) =>
           set((state) => ({
             purchases:
-              state.purchases.map((p) =>
-                p.id === id
-                  ? {
-                      ...p,
-                      isFavorite:
-                        !p.isFavorite,
-                    }
-                  : p
+              state.purchases.map(
+                (purchase) =>
+                  purchase.id === id
+                    ? {
+                        ...purchase,
+                        isFavorite:
+                          !purchase.isFavorite,
+                      }
+                    : purchase
               ),
           })),
 
-        completePurchase: (id) =>
+        completePurchase: (
+          id
+        ) =>
           set((state) => ({
             purchases:
-              state.purchases.map((p) =>
-                p.id === id
-                  ? {
-                      ...p,
-                      status:
-                        "completed",
-                    }
-                  : p
+              state.purchases.map(
+                (purchase) =>
+                  purchase.id === id
+                    ? {
+                        ...purchase,
+                        status:
+                          "completed",
+                      }
+                    : purchase
               ),
           })),
       }),

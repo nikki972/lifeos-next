@@ -53,7 +53,7 @@ export function PurchaseCard({
             {purchase.price} ₽
           </p>
 
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-2 mt-3 flex-wrap">
             <div className="bg-zinc-800 text-sm px-3 py-1 rounded-full">
               {
                 categoryMap[
@@ -120,15 +120,18 @@ export function PurchaseCard({
       </div>
 
       <div className="flex gap-2 mt-5">
-        <Button
-          onClick={() =>
-            completePurchase(
-              purchase.id
-            )
-          }
-        >
-          <Check />
-        </Button>
+        {purchase.status !==
+          "completed" && (
+          <Button
+            onClick={() =>
+              completePurchase(
+                purchase.id
+              )
+            }
+          >
+            <Check />
+          </Button>
+        )}
 
         <Button
           variant="destructive"
