@@ -1,75 +1,5 @@
 "use client";
 
-import { Purchase } from "@/types/purchase";
-
-import { Card } from "@/components/ui/card";
-
-import { Button } from "@/components/ui/button";
-
-import {
-  Heart,
-  Trash2,
-  Check,
-} from "lucide-react";
-
-type Props = {
-  purchase: Purchase;
-
-  onDelete: (
-    id: string
-  ) => void;
-
-  onToggleFavorite: (
-    id: string,
-    current: boolean
-  ) => void;
-
-  onToggleStatus: (
-    id: string,
-    current: string
-  ) => void;
-};
-
-const categoryMap: Record<
-  string,
-  string
-> = {
-  apartment: "Квартира",
-
-  car: "Машина",
-
-  clothes: "Одежда",
-
-  vacation: "Отдых",
-
-  other: "Другое",
-};
-
-const priorityMap: Record<
-  string,
-  string
-> = {
-  urgent: "Срочно",
-
-  wait: "Подождет",
-
-  dream: "Мечта",
-};
-
-export function PurchaseCard({
-  purchase,
-  onDelete,
-  onToggleFavorite,
-  onToggleStatus,
-}: Props) {
-  return (
-    <Card className="bg-zinc-900 border-zinc-800 rounded-3xl p-4">
-      <div className="flex items-start justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">
-            {purchase.title}
-          </h2>
-
           <p className="text-2xl font-bold mt-2">
             {purchase.price} ₽
           </p>
@@ -100,13 +30,13 @@ export function PurchaseCard({
           onClick={() =>
             onToggleFavorite(
               purchase.id,
-              purchase.isFavorite
+              purchase.is_favorite
             )
           }
         >
           <Heart
             className={
-              purchase.isFavorite
+              purchase.is_favorite
                 ? "fill-red-500 text-red-500"
                 : "text-zinc-500"
             }
