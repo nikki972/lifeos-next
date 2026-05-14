@@ -1,43 +1,38 @@
 "use client";
 
-import { Trash2, Star } from "lucide-react";
+import {
+  CheckCircle2,
+  Star,
+  Trash2,
+} from "lucide-react";
 
-import { Purchase } from "@/types/purchase";
+import {
+  PURCHASE_CATEGORY_LABELS,
+  PURCHASE_PRIORITY_LABELS,
+  PURCHASE_STATUS_LABELS,
+  Purchase,
+  PurchaseStatus,
+} from "@/types/purchase";
 
 interface Props {
   purchase: Purchase;
-
   onDelete: (id: string) => void;
-
   onToggleFavorite: (
     id: string,
     current: boolean
   ) => void;
-
   onToggleStatus: (
     id: string,
-    current: string
+    current: PurchaseStatus
   ) => void;
 }
 
-const categoryMap: Record<
-  string,
-  string
-> = {
-  tech: "Техника",
-  home: "Дом",
-  clothes: "Одежда",
-  apartment: "Квартира",
-};
-
-const priorityMap: Record<
-  string,
-  string
-> = {
-  low: "Низкий",
-  medium: "Средний",
-  high: "Высокий",
-};
+const priceFormatter =
+  new Intl.NumberFormat("ru-RU", {
+    style: "currency",
+    currency: "RUB",
+    maximumFractionDigits: 0,
+  });
 
 export function PurchaseCard({
   purchase,
@@ -45,66 +40,78 @@ export function PurchaseCard({
   onToggleFavorite,
   onToggleStatus,
 }: Props) {
+  const isCompleted =
+    purchase.status === "completed";
+
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
-      <div className="flex items-start justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">
+    <article className="rounded-3xl border border-zinc-800 bg-zinc-900 p-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h2 className="break-words text-xl font-bold">
             {purchase.title}
           </h2>
 
-          <p className="text-zinc-400 mt-1">
-            ₽{purchase.price}
+          <p className="mt-1 text-zinc-400">
+            {priceFormatter.format(
+              purchase.price
+            )}
           </p>
 
-          <div className="flex gap-2 mt-3 flex-wrap">
-            <div className="bg-zinc-800 text-sm px-3 py-1 rounded-full">
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="rounded-full bg-zinc-800 px-3 py-1 text-sm">
               {
-                categoryMap[
+                PURCHASE_CATEGORY_LABELS[
                   purchase.category
                 ]
               }
-            </div>
+            </span>
 
-            <div className="bg-zinc-800 text-sm px-3 py-1 rounded-full">
+            <span className="rounded-full bg-zinc-800 px-3 py-1 text-sm">
               {
-                priorityMap[
+                PURCHASE_PRIORITY_LABELS[
                   purchase.priority
                 ]
               }
-            </div>
+            </span>
 
             <button
+              type="button"
               onClick={() =>
                 onToggleStatus(
                   purchase.id,
                   purchase.status
                 )
               }
-              className={`text-sm px-3 py-1 rounded-full ${
-                purchase.status ===
-                "completed"
-                  ? "bg-green-500/20 text-green-400"
-                  : "bg-yellow-500/20 text-yellow-400"
+              className={`rounded-full px-3 py-1 text-sm transition ${
+                isCompleted
+                  ? "bg-green-500/20 text-green-300 hover:bg-green-500/30"
+                  : "bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30"
               }`}
             >
-              {purchase.status ===
-              "completed"
-                ? "Куплено"
-                : "В процессе"}
+              {
+                PURCHASE_STATUS_LABELS[
+                  purchase.status
+                ]
+              }
             </button>
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex shrink-0 gap-2">
           <button
+            type="button"
+            aria-label={
+              purchase.is_favorite
+                ? "Убрать из избранного"
+                : "Добавить в избранное"
+            }
             onClick={() =>
               onToggleFavorite(
                 purchase.id,
                 purchase.is_favorite
               )
             }
-            className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition"
+            className="rounded-xl bg-zinc-800 p-2 transition hover:bg-zinc-700"
           >
             <Star
               size={18}
@@ -117,10 +124,37 @@ export function PurchaseCard({
           </button>
 
           <button
+            type="button"
+            aria-label={
+              isCompleted
+                ? "Вернуть в процесс"
+                : "Отметить как купленное"
+            }
+            onClick={() =>
+              onToggleStatus(
+                purchase.id,
+                purchase.status
+              )
+            }
+            className="rounded-xl bg-zinc-800 p-2 transition hover:bg-zinc-700"
+          >
+            <CheckCircle2
+              size={18}
+              className={
+                isCompleted
+                  ? "text-green-300"
+                  : "text-zinc-300"
+              }
+            />
+          </button>
+
+          <button
+            type="button"
+            aria-label="Удалить покупку"
             onClick={() =>
               onDelete(purchase.id)
             }
-            className="p-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 transition"
+            className="rounded-xl bg-red-500/20 p-2 transition hover:bg-red-500/30"
           >
             <Trash2
               size={18}
@@ -129,6 +163,6 @@ export function PurchaseCard({
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

@@ -1,14 +1,12 @@
-export type Category =
-  | "apartment"
-  | "car"
-  | "3d"
-  | "clothes"
-  | "rest";
+import {
+  PURCHASE_CATEGORIES,
+  PURCHASE_CATEGORY_LABELS,
+  PurchaseCategory,
+} from "@/types/purchase";
 
-export const CATEGORY_LABELS = {
-  apartment: "Квартира",
-  car: "Машина",
-  "3d": "3D",
-  clothes: "Одежда",
-  rest: "Отдых",
-};
+export type Category = PurchaseCategory;
+
+export const CATEGORIES = PURCHASE_CATEGORIES;
+
+export const CATEGORY_LABELS =
+  PURCHASE_CATEGORY_LABELS;

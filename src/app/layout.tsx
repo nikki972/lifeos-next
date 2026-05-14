@@ -8,14 +8,15 @@ export const metadata: Metadata = {
   title: "LifeOS",
 
   description:
-    "Personal Life Management System",
+    "Личная система покупок и финансов",
 
   manifest: "/manifest.json",
 
   appleWebApp: {
     capable: true,
 
-    statusBarStyle: "black",
+    statusBarStyle:
+      "black-translucent",
 
     title: "LifeOS",
   },
@@ -29,6 +30,9 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -38,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className="bg-black text-white">
+      <body>
         {children}
 
         <BottomNavbar />

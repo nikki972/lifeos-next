@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  PieChart,
-  Pie,
   Cell,
+  Pie,
+  PieChart,
   ResponsiveContainer,
 } from "recharts";
 
@@ -24,12 +24,13 @@ const data = [
 
 export function ExpensesChart() {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 h-[300px]">
+    <div className="h-[300px] rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
       <ResponsiveContainer>
         <PieChart>
           <Pie
             data={data}
             dataKey="value"
+            nameKey="name"
             outerRadius={100}
           >
             <Cell fill="#3b82f6" />

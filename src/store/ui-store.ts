@@ -1,35 +1,55 @@
 "use client";
 
 import { create } from "zustand";
-import { Category } from "@/types/category";
 
-type PriorityFilter = "all" | "urgent" | "wait" | "wish";
-type StatusFilter = "all" | "planned" | "completed" | "postponed" | "cancelled";
+import {
+  PurchaseCategory,
+  PurchasePriority,
+  PurchaseStatus,
+} from "@/types/purchase";
+
+type CategoryFilter = PurchaseCategory | "all";
+type PriorityFilter = PurchasePriority | "all";
+type StatusFilter = PurchaseStatus | "all";
 
 interface UIStore {
   search: string;
-  setSearch: (v: string) => void;
+  setSearch: (value: string) => void;
 
-  category: Category | "all";
-  setCategory: (v: Category | "all") => void;
+  category: CategoryFilter;
+  setCategory: (value: CategoryFilter) => void;
 
   priority: PriorityFilter;
-  setPriority: (v: PriorityFilter) => void;
+  setPriority: (value: PriorityFilter) => void;
 
   status: StatusFilter;
-  setStatus: (v: StatusFilter) => void;
+  setStatus: (value: StatusFilter) => void;
 }
 
-export const useUIStore = create<UIStore>((set) => ({
-  search: "",
-  setSearch: (v) => set({ search: v }),
+export const useUIStore = create<UIStore>(
+  (set) => ({
+    search: "",
+    setSearch: (value) =>
+      set({
+        search: value,
+      }),
 
-  category: "all",
-  setCategory: (v) => set({ category: v }),
+    category: "all",
+    setCategory: (value) =>
+      set({
+        category: value,
+      }),
 
-  priority: "all",
-  setPriority: (v) => set({ priority: v }),
+    priority: "all",
+    setPriority: (value) =>
+      set({
+        priority: value,
+      }),
 
-  status: "planned",
-  setStatus: (v) => set({ status: v }),
-}));
+    status: "all",
+    setStatus: (value) =>
+      set({
+        status: value,
+      }),
+  })
+);

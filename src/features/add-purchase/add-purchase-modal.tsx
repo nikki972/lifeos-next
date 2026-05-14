@@ -2,143 +2,227 @@
 
 import { useState } from "react";
 
-import { Purchase } from "@/types/purchase";
+import {
+  PURCHASE_CATEGORIES,
+  PURCHASE_CATEGORY_LABELS,
+  PURCHASE_PRIORITIES,
+  PURCHASE_PRIORITY_LABELS,
+  Purchase,
+  PurchaseCategory,
+  PurchasePriority,
+} from "@/types/purchase";
 
 interface Props {
   onAdd: (
-    purchase: Purchase
-  ) => Promise<void>;
+    purchase: Omit<
+      Purchase,
+      "user_id"
+    >
+  ) => Promise<boolean>;
 }
+
+const initialCategory: PurchaseCategory =
+  "apartment";
+
+const initialPriority: PurchasePriority =
+  "medium";
 
 export function AddPurchaseModal({
   onAdd,
 }: Props) {
   const [title, setTitle] =
     useState("");
-
   const [price, setPrice] =
     useState("");
-
   const [category, setCategory] =
-    useState("apartment");
-
+    useState<PurchaseCategory>(
+      initialCategory
+    );
   const [priority, setPriority] =
-    useState("medium");
+    useState<PurchasePriority>(
+      initialPriority
+    );
+  const [error, setError] =
+    useState("");
+  const [submitting, setSubmitting] =
+    useState(false);
 
-  async function handleAdd() {
-    if (!title || !price) return;
+  async function handleAdd(
+    event: React.FormEvent
+  ) {
+    event.preventDefault();
 
-    await onAdd({
+    const trimmedTitle =
+      title.trim();
+    const numericPrice =
+      Number(price);
+
+    if (!trimmedTitle) {
+      setError(
+        "Введите название покупки."
+      );
+      return;
+    }
+
+    if (
+      !Number.isFinite(
+        numericPrice
+      ) ||
+      numericPrice <= 0
+    ) {
+      setError(
+        "Введите цену больше нуля."
+      );
+      return;
+    }
+
+    setSubmitting(true);
+    setError("");
+
+    const saved = await onAdd({
       id: crypto.randomUUID(),
-
-      title,
-
-      price: Number(price),
-
+      title: trimmedTitle,
+      price: numericPrice,
       category,
-
       priority,
-
       status: "active",
-
       created_at:
         new Date().toISOString(),
-
       is_favorite: false,
     });
 
+    setSubmitting(false);
+
+    if (!saved) {
+      setError(
+        "Не удалось сохранить покупку. Проверьте подключение к базе."
+      );
+      return;
+    }
+
     setTitle("");
-
     setPrice("");
-
-    setCategory("apartment");
-
-    setPriority("medium");
+    setCategory(initialCategory);
+    setPriority(initialPriority);
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+    <form
+      onSubmit={handleAdd}
+      className="rounded-3xl border border-zinc-800 bg-zinc-900 p-4"
+    >
       <div className="space-y-4">
         <input
-          className="w-full bg-black border border-zinc-700 rounded-2xl px-4 py-3 outline-none"
+          className="w-full rounded-2xl border border-zinc-700 bg-black px-4 py-3 outline-none transition placeholder:text-zinc-600 focus:border-zinc-500"
           placeholder="Название"
           value={title}
-          onChange={(e) =>
+          onChange={(event) =>
             setTitle(
-              e.target.value
+              event.target.value
             )
           }
         />
 
         <input
-          className="w-full bg-black border border-zinc-700 rounded-2xl px-4 py-3 outline-none"
+          className="w-full rounded-2xl border border-zinc-700 bg-black px-4 py-3 outline-none transition placeholder:text-zinc-600 focus:border-zinc-500"
           placeholder="Цена"
           type="number"
+          min="0"
+          step="1"
+          inputMode="decimal"
           value={price}
-          onChange={(e) =>
+          onChange={(event) =>
             setPrice(
-              e.target.value
+              event.target.value
             )
           }
         />
 
-        <div className="flex gap-4">
-          <select
-            value={category}
-            onChange={(e) =>
-              setCategory(
-                e.target.value
-              )
-            }
-            className="bg-black border border-zinc-700 rounded-2xl px-4 py-3"
-          >
-            <option value="apartment">
-              Квартира
-            </option>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="space-y-2">
+            <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+              Категория
+            </span>
 
-            <option value="tech">
-              Техника
-            </option>
+            <select
+              value={category}
+              onChange={(event) =>
+                setCategory(
+                  event.target
+                    .value as PurchaseCategory
+                )
+              }
+              className="w-full rounded-2xl border border-zinc-700 bg-black px-4 py-3 outline-none"
+            >
+              {PURCHASE_CATEGORIES.map(
+                (value) => (
+                  <option
+                    key={value}
+                    value={value}
+                  >
+                    {
+                      PURCHASE_CATEGORY_LABELS[
+                        value
+                      ]
+                    }
+                  </option>
+                )
+              )}
+            </select>
+          </label>
 
-            <option value="home">
-              Дом
-            </option>
+          <label className="space-y-2">
+            <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+              Приоритет
+            </span>
 
-            <option value="clothes">
-              Одежда
-            </option>
-          </select>
-
-          <select
-            value={priority}
-            onChange={(e) =>
-              setPriority(
-                e.target.value
-              )
-            }
-            className="bg-black border border-zinc-700 rounded-2xl px-4 py-3"
-          >
-            <option value="low">
-              Низкий
-            </option>
-
-            <option value="medium">
-              Средний
-            </option>
-
-            <option value="high">
-              Высокий
-            </option>
-          </select>
+            <select
+              value={priority}
+              onChange={(event) =>
+                setPriority(
+                  event.target
+                    .value as PurchasePriority
+                )
+              }
+              className="w-full rounded-2xl border border-zinc-700 bg-black px-4 py-3 outline-none"
+            >
+              {PURCHASE_PRIORITIES.map(
+                (value) => (
+                  <option
+                    key={value}
+                    value={value}
+                  >
+                    {
+                      PURCHASE_PRIORITY_LABELS[
+                        value
+                      ]
+                    }
+                  </option>
+                )
+              )}
+            </select>
+          </label>
         </div>
 
+        {error && (
+          <p
+            role="alert"
+            className="text-sm text-red-400"
+          >
+            {error}
+          </p>
+        )}
+
         <button
-          onClick={handleAdd}
-          className="w-full bg-white text-black rounded-2xl py-3 font-semibold hover:opacity-90 transition"
+          type="submit"
+          disabled={submitting}
+          className="w-full rounded-2xl bg-white py-3 font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Добавить покупку
+          {submitting
+            ? "Сохраняем..."
+            : "Добавить покупку"}
         </button>
       </div>
-    </div>
+    </form>
   );
 }
