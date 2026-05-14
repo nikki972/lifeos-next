@@ -12,7 +12,7 @@ import {
   Check,
 } from "lucide-react";
 
-interface Props {
+type Props = {
   purchase: Purchase;
 
   onDelete: (
@@ -28,20 +28,32 @@ interface Props {
     id: string,
     current: string
   ) => void;
-}
-
-const categoryMap = {
-  apartment: "Квартира",
-  car: "Машина",
-  "3d": "3D",
-  clothes: "Одежда",
-  rest: "Отдых",
 };
 
-const priorityMap = {
+const categoryMap: Record<
+  string,
+  string
+> = {
+  apartment: "Квартира",
+
+  car: "Машина",
+
+  clothes: "Одежда",
+
+  vacation: "Отдых",
+
+  other: "Другое",
+};
+
+const priorityMap: Record<
+  string,
+  string
+> = {
   urgent: "Срочно",
+
   wait: "Подождет",
-  wish: "Хочу",
+
+  dream: "Мечта",
 };
 
 export function PurchaseCard({
@@ -64,44 +76,15 @@ export function PurchaseCard({
 
           <div className="flex gap-2 mt-3 flex-wrap">
             <div className="bg-zinc-800 text-sm px-3 py-1 rounded-full">
-              {
-                categoryMap[
-                  purchase.category
-                ]
-              }
+              {categoryMap[
+                purchase.category
+              ] || "Другое"}
             </div>
 
-            <div
-              className={`
-                text-sm
-                px-3
-                py-1
-                rounded-full
-                ${
-                  purchase.priority ===
-                  "urgent"
-                    ? "bg-red-500/20 text-red-400"
-                    : ""
-                }
-                ${
-                  purchase.priority ===
-                  "wait"
-                    ? "bg-yellow-500/20 text-yellow-400"
-                    : ""
-                }
-                ${
-                  purchase.priority ===
-                  "wish"
-                    ? "bg-blue-500/20 text-blue-400"
-                    : ""
-                }
-              `}
-            >
-              {
-                priorityMap[
-                  purchase.priority
-                ]
-              }
+            <div className="bg-blue-500/20 text-blue-400 text-sm px-3 py-1 rounded-full">
+              {priorityMap[
+                purchase.priority
+              ] || "Обычный"}
             </div>
           </div>
 

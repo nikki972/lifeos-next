@@ -3,10 +3,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-
 import { Input } from "@/components/ui/input";
-
-import { usePurchasesStore } from "@/store/purchases-store";
 
 import {
   Select,
@@ -16,10 +13,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function AddPurchaseModal() {
-  const { addPurchase } =
-    usePurchasesStore();
+type Props = {
+  onAdd: (purchase: {
+    title: string;
+    price: number;
+    category: string;
+    priority: string;
+  }) => void;
+};
 
+export function AddPurchaseModal({
+  onAdd,
+}: Props) {
   const [title, setTitle] =
     useState("");
 
@@ -35,32 +40,21 @@ export function AddPurchaseModal() {
   const createPurchase = () => {
     if (!title || !price) return;
 
-    addPurchase({
-      id: crypto.randomUUID(),
-
+    onAdd({
       title,
-
       price: Number(price),
-
-      category: category as any,
-
-      priority: priority as any,
-
-      createdAt:
-        new Date().toISOString(),
-
-      isFavorite: false,
-
-      status: "planned",
+      category,
+      priority,
     });
 
     setTitle("");
-
     setPrice("");
+    setCategory("apartment");
+    setPriority("wait");
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 space-y-4 relative z-10">
+    <div className="rounded-3xl border border-white/10 bg-white/5 p-4 space-y-4 backdrop-blur">
       <Input
         placeholder="Название"
         value={title}
@@ -78,16 +72,16 @@ export function AddPurchaseModal() {
         }
       />
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
         <Select
           value={category}
           onValueChange={setCategory}
         >
-          <SelectTrigger className="bg-zinc-950 border-zinc-700">
-            <SelectValue placeholder="Категория" />
+          <SelectTrigger>
+            <SelectValue />
           </SelectTrigger>
 
-          <SelectContent className="bg-zinc-900 border-zinc-700 text-white">
+          <SelectContent>
             <SelectItem value="apartment">
               Квартира
             </SelectItem>
@@ -96,16 +90,16 @@ export function AddPurchaseModal() {
               Машина
             </SelectItem>
 
-            <SelectItem value="3d">
-              3D
-            </SelectItem>
-
             <SelectItem value="clothes">
               Одежда
             </SelectItem>
 
-            <SelectItem value="rest">
+            <SelectItem value="vacation">
               Отдых
+            </SelectItem>
+
+            <SelectItem value="other">
+              Другое
             </SelectItem>
           </SelectContent>
         </Select>
@@ -114,28 +108,28 @@ export function AddPurchaseModal() {
           value={priority}
           onValueChange={setPriority}
         >
-          <SelectTrigger className="bg-zinc-950 border-zinc-700">
-            <SelectValue placeholder="Приоритет" />
+          <SelectTrigger>
+            <SelectValue />
           </SelectTrigger>
 
-          <SelectContent className="bg-zinc-900 border-zinc-700 text-white">
+          <SelectContent>
             <SelectItem value="urgent">
               Срочно
             </SelectItem>
 
             <SelectItem value="wait">
-              Может подождать
+              Подождет
             </SelectItem>
 
-            <SelectItem value="wish">
-              Хочу
+            <SelectItem value="dream">
+              Мечта
             </SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <Button
-        className="w-full rounded-2xl"
+        className="w-full"
         onClick={createPurchase}
       >
         Добавить покупку

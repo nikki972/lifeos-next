@@ -40,41 +40,123 @@ export default function PurchasesPage() {
       return;
     }
 
-    const normalized =
-      (data || []).map((item: any) => ({
-        id: item.id,
+    const normalized: Purchase[] =
+      (data || []).map(
+        (item: any) => ({
+          id: item.id,
 
-        title: item.title,
+          title: item.title,
 
-        price: item.price,
+          price: Number(
+            item.price
+          ),
 
-        category:
-          item.category,
+          category:
+            item.category,
 
-        priority:
-          item.priority,
+          priority:
+            item.priority,
 
-        status: item.status,
+          status: item.status,
 
-        createdAt:
-          item.created_at,
+          createdAt:
+            item.created_at,
 
-        isFavorite:
-          item.is_favorite,
-      }));
+          isFavorite:
+            item.is_favorite,
+        })
+      );
 
     setPurchases(normalized);
 
     setLoading(false);
   }
 
+  async function addPurchase(
+    purchase: {
+      title: string;
+      price: number;
+      category: string;
+      priority: string;
+    }
+  ) {
+    const newPurchase = {
+      id: crypto.randomUUID(),
+
+      title: purchase.title,
+
+      price: purchase.price,
+
+      category:
+        purchase.category,
+
+      priority:
+        purchase.priority,
+
+      status: "planned",
+
+      created_at:
+        new Date().toISOString(),
+
+      is_favorite: false,
+    };
+
+    const { error } =
+      await supabase
+        .from("purchases")
+        .insert(newPurchase);
+
+    if (error) {
+      console.error(error);
+
+      return;
+    }
+
+    const normalized: Purchase = {
+      id: newPurchase.id,
+
+      title:
+        newPurchase.title,
+
+      price:
+        newPurchase.price,
+
+      category:
+        newPurchase.category as any,
+
+      priority:
+        newPurchase.priority as any,
+
+      status:
+        newPurchase.status as any,
+
+      createdAt:
+        newPurchase.created_at,
+
+      isFavorite:
+        newPurchase.is_favorite,
+    };
+
+    setPurchases((prev) => [
+      normalized,
+      ...prev,
+    ]);
+  }
+
   async function deletePurchase(
     id: string
   ) {
-    await supabase
-      .from("purchases")
-      .delete()
-      .eq("id", id);
+    const { error } =
+      await supabase
+        .from("purchases")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+      console.error(error);
+
+      return;
+    }
 
     setPurchases((prev) =>
       prev.filter(
@@ -87,12 +169,20 @@ export default function PurchasesPage() {
     id: string,
     current: boolean
   ) {
-    await supabase
-      .from("purchases")
-      .update({
-        is_favorite: !current,
-      })
-      .eq("id", id);
+    const { error } =
+      await supabase
+        .from("purchases")
+        .update({
+          is_favorite:
+            !current,
+        })
+        .eq("id", id);
+
+    if (error) {
+      console.error(error);
+
+      return;
+    }
 
     setPurchases((prev) =>
       prev.map((item) =>
@@ -117,12 +207,19 @@ export default function PurchasesPage() {
         ? "completed"
         : "planned";
 
-    await supabase
-      .from("purchases")
-      .update({
-        status: nextStatus,
-      })
-      .eq("id", id);
+    const { error } =
+      await supabase
+        .from("purchases")
+        .update({
+          status: nextStatus,
+        })
+        .eq("id", id);
+
+    if (error) {
+      console.error(error);
+
+      return;
+    }
 
     setPurchases((prev) =>
       prev.map((item) =>
@@ -142,7 +239,9 @@ export default function PurchasesPage() {
     return (
       <main className="min-h-screen bg-black text-white p-4">
         <div className="max-w-xl mx-auto">
-          Загрузка...
+          <p className="text-zinc-400">
+            Загрузка...
+          </p>
         </div>
       </main>
     );
@@ -159,26 +258,35 @@ export default function PurchasesPage() {
           Cloud synced purchases
         </p>
 
-        <AddPurchaseModal />
+        <AddPurchaseModal
+          onAdd={addPurchase}
+        />
 
         <div className="space-y-4 mt-8">
-          {purchases.map(
-            (purchase) => (
-              <PurchaseCard
-                key={purchase.id}
-                purchase={
-                  purchase
-                }
-                onDelete={
-                  deletePurchase
-                }
-                onToggleFavorite={
-                  toggleFavorite
-                }
-                onToggleStatus={
-                  toggleStatus
-                }
-              />
+          {purchases.length ===
+          0 ? (
+            <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6 text-center text-zinc-500">
+              Пока нет покупок
+            </div>
+          ) : (
+            purchases.map(
+              (purchase) => (
+                <PurchaseCard
+                  key={purchase.id}
+                  purchase={
+                    purchase
+                  }
+                  onDelete={
+                    deletePurchase
+                  }
+                  onToggleFavorite={
+                    toggleFavorite
+                  }
+                  onToggleStatus={
+                    toggleStatus
+                  }
+                />
+              )
             )
           )}
         </div>
