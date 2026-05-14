@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 
 import { PurchaseCard } from "@/entities/purchase/purchase-card";
 
+import { AddPurchaseModal } from "@/features/add-purchase/add-purchase-modal";
+
 import { Purchase } from "@/types/purchase";
 
 import { supabase } from "@/lib/supabase";
-
-import { AddPurchaseModal } from "@/features/add-purchase/add-purchase-modal";
 
 export default function PurchasesPage() {
   const [purchases, setPurchases] =
@@ -16,10 +16,6 @@ export default function PurchasesPage() {
 
   const [loading, setLoading] =
     useState(true);
-
-  useEffect(() => {
-    loadPurchases();
-  }, []);
 
   async function loadPurchases() {
     setLoading(true);
@@ -34,113 +30,29 @@ export default function PurchasesPage() {
 
     if (error) {
       console.error(error);
-
       setLoading(false);
-
       return;
     }
 
-    const normalized: Purchase[] =
-      (data || []).map(
-        (item: any) => ({
-          id: item.id,
-
-          title: item.title,
-
-          price: Number(
-            item.price
-          ),
-
-          category:
-            item.category,
-
-          priority:
-            item.priority,
-
-          status: item.status,
-
-          createdAt:
-            item.created_at,
-
-          isFavorite:
-            item.is_favorite,
-        })
-      );
-
-    setPurchases(normalized);
+    setPurchases(data || []);
 
     setLoading(false);
   }
 
   async function addPurchase(
-    purchase: {
-      title: string;
-      price: number;
-      category: string;
-      priority: string;
-    }
+    purchase: Purchase
   ) {
-    const newPurchase = {
-      id: crypto.randomUUID(),
-
-      title: purchase.title,
-
-      price: purchase.price,
-
-      category:
-        purchase.category,
-
-      priority:
-        purchase.priority,
-
-      status: "planned",
-
-      created_at:
-        new Date().toISOString(),
-
-      is_favorite: false,
-    };
-
     const { error } =
       await supabase
         .from("purchases")
-        .insert(newPurchase);
+        .insert(purchase);
 
     if (error) {
       console.error(error);
-
       return;
     }
 
-    const normalized: Purchase = {
-      id: newPurchase.id,
-
-      title:
-        newPurchase.title,
-
-      price:
-        newPurchase.price,
-
-      category:
-        newPurchase.category as any,
-
-      priority:
-        newPurchase.priority as any,
-
-      status:
-        newPurchase.status as any,
-
-      createdAt:
-        newPurchase.created_at,
-
-      isFavorite:
-        newPurchase.is_favorite,
-    };
-
-    setPurchases((prev) => [
-      normalized,
-      ...prev,
-    ]);
+    await loadPurchases();
   }
 
   async function deletePurchase(
@@ -154,15 +66,10 @@ export default function PurchasesPage() {
 
     if (error) {
       console.error(error);
-
       return;
     }
 
-    setPurchases((prev) =>
-      prev.filter(
-        (item) => item.id !== id
-      )
-    );
+    await loadPurchases();
   }
 
   async function toggleFavorite(
@@ -173,29 +80,16 @@ export default function PurchasesPage() {
       await supabase
         .from("purchases")
         .update({
-          is_favorite:
-            !current,
+          is_favorite: !current,
         })
         .eq("id", id);
 
     if (error) {
       console.error(error);
-
       return;
     }
 
-    setPurchases((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-
-              isFavorite:
-                !current,
-            }
-          : item
-      )
-    );
+    await loadPurchases();
   }
 
   async function toggleStatus(
@@ -203,9 +97,9 @@ export default function PurchasesPage() {
     current: string
   ) {
     const nextStatus =
-      current === "planned"
-        ? "completed"
-        : "planned";
+      current === "completed"
+        ? "active"
+        : "completed";
 
     const { error } =
       await supabase
@@ -217,44 +111,56 @@ export default function PurchasesPage() {
 
     if (error) {
       console.error(error);
-
       return;
     }
 
-    setPurchases((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-
-              status:
-                nextStatus as any,
-            }
-          : item
-      )
-    );
+    await loadPurchases();
   }
+
+  useEffect(() => {
+    loadPurchases();
+  }, []);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("purchases-changes")
+
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "purchases",
+        },
+
+        () => {
+          loadPurchases();
+        }
+      )
+
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-black text-white p-4">
-        <div className="max-w-xl mx-auto">
-          <p className="text-zinc-400">
-            Загрузка...
-          </p>
-        </div>
-      </main>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        Загрузка...
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-4 pb-40">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-5xl font-bold">
+    <main className="min-h-screen bg-black text-white p-6 pb-32">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-6xl font-bold mb-2">
           Покупки
         </h1>
 
-        <p className="text-zinc-400 mt-2 mb-8">
+        <p className="text-zinc-400 mb-10">
           Cloud synced purchases
         </p>
 
@@ -263,32 +169,25 @@ export default function PurchasesPage() {
         />
 
         <div className="space-y-4 mt-8">
-          {purchases.length ===
-          0 ? (
-            <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6 text-center text-zinc-500">
+          {purchases.length === 0 && (
+            <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-10 text-center text-zinc-500">
               Пока нет покупок
             </div>
-          ) : (
-            purchases.map(
-              (purchase) => (
-                <PurchaseCard
-                  key={purchase.id}
-                  purchase={
-                    purchase
-                  }
-                  onDelete={
-                    deletePurchase
-                  }
-                  onToggleFavorite={
-                    toggleFavorite
-                  }
-                  onToggleStatus={
-                    toggleStatus
-                  }
-                />
-              )
-            )
           )}
+
+          {purchases.map((purchase) => (
+            <PurchaseCard
+              key={purchase.id}
+              purchase={purchase}
+              onDelete={deletePurchase}
+              onToggleFavorite={
+                toggleFavorite
+              }
+              onToggleStatus={
+                toggleStatus
+              }
+            />
+          ))}
         </div>
       </div>
     </main>

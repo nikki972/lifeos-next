@@ -1,19 +1,3 @@
-export type PurchaseCategory =
-  | "apartment"
-  | "car"
-  | "3d"
-  | "clothes"
-  | "rest";
-
-export type PurchasePriority =
-  | "urgent"
-  | "wait"
-  | "wish";
-
-export type PurchaseStatus =
-  | "planned"
-  | "completed";
-
 export interface Purchase {
   id: string;
 
@@ -21,13 +5,13 @@ export interface Purchase {
 
   price: number;
 
-  category: PurchaseCategory;
+  category: string;
 
-  priority: PurchasePriority;
+  priority: string;
 
-  status: PurchaseStatus;
+  status: string;
 
-  createdAt: string;
+  created_at: string;
 
-  isFavorite: boolean;
+  is_favorite: boolean;
 }

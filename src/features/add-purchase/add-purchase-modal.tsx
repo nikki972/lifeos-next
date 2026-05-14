@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+
 import { Input } from "@/components/ui/input";
 
 import {
@@ -13,13 +14,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Purchase } from "@/types/purchase";
+
 type Props = {
-  onAdd: (purchase: {
-    title: string;
-    price: number;
-    category: string;
-    priority: string;
-  }) => void;
+  onAdd: (
+    purchase: Purchase
+  ) => Promise<void>;
 };
 
 export function AddPurchaseModal({
@@ -37,24 +37,41 @@ export function AddPurchaseModal({
   const [priority, setPriority] =
     useState("wait");
 
-  const createPurchase = () => {
+  async function createPurchase() {
     if (!title || !price) return;
 
-    onAdd({
+    const purchase: Purchase = {
+      id: crypto.randomUUID(),
+
       title,
+
       price: Number(price),
+
       category,
+
       priority,
-    });
+
+      status: "active",
+
+      created_at:
+        new Date().toISOString(),
+
+      is_favorite: false,
+    };
+
+    await onAdd(purchase);
 
     setTitle("");
+
     setPrice("");
+
     setCategory("apartment");
+
     setPriority("wait");
-  };
+  }
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/5 p-4 space-y-4 backdrop-blur">
+    <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-4 space-y-4">
       <Input
         placeholder="Название"
         value={title}
@@ -64,15 +81,15 @@ export function AddPurchaseModal({
       />
 
       <Input
-        placeholder="Цена"
         type="number"
+        placeholder="Цена"
         value={price}
         onChange={(e) =>
           setPrice(e.target.value)
         }
       />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex gap-4">
         <Select
           value={category}
           onValueChange={setCategory}
@@ -94,12 +111,8 @@ export function AddPurchaseModal({
               Одежда
             </SelectItem>
 
-            <SelectItem value="vacation">
+            <SelectItem value="travel">
               Отдых
-            </SelectItem>
-
-            <SelectItem value="other">
-              Другое
             </SelectItem>
           </SelectContent>
         </Select>
@@ -122,15 +135,15 @@ export function AddPurchaseModal({
             </SelectItem>
 
             <SelectItem value="dream">
-              Мечта
+              Хочу
             </SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <Button
-        className="w-full"
         onClick={createPurchase}
+        className="w-full"
       >
         Добавить покупку
       </Button>
